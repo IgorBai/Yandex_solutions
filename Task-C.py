@@ -1,4 +1,46 @@
-# Задача C (Тренировочный контест Яндекса)
+# Задача C. Футбол. Условие задачи под кодом, внизу. 
+# (Источник: Тренировочный контест Яндекса)
+
+
+import sys
+
+
+def line_int():
+    return [int(i) for i in sys.stdin.readline().strip().replace('  ', ' ').split()]
+
+
+n_sotr, n_igr = line_int()
+
+h = dict()
+for i in range(n_igr):
+    gol1, gol2 = line_int()
+    ids = line_int()
+    res = gol1 - gol2
+
+    sered = int(len(ids)/2)  # вдруг в командах не по 5 человек
+    for id in ids[:sered]:   # строки ниже пока оставил в "классическом" виде
+        if id in h:
+            h[id] += res
+        else:
+            h[id] = res
+    for id in ids[sered:]:
+        if id in h:
+            h[id] -= res
+        else:
+            h[id] = -res
+
+    cnt = 0
+    # for id in h:  # сравниваем по всем сыгравшим
+    for id in ids:  # сравниваем только внутри игроков этого матча
+        if h[id] > h[0]:
+            cnt += 1
+    #print(ids)
+    #print(dict(sorted(h.items())))
+    print(cnt)
+
+
+
+# Условие задачи
 #
 # Сотрудники Яндекса любят играть в мини-футбол по выходным. В каждом матче играют две команды
 # по 5 человек. Состав на игру в каждую команду выбирается случайно равновероятно из всех сотрудников Яндекса.
@@ -12,7 +54,8 @@
 # разницей мячей больше, чем у Аркадия.
 #
 # Формат ввода
-# В первой строке записано два числа: N (10 ≤ N ≤ 10000) - число сотрудников, M (1 ≤ M ≤ 100000) — число футбольных
+# В первой строке записано два числа: N (10 ≤ N ≤ 10000) - число сотрудников, M (1 ≤ M ≤ 100000) — число 
+# футбольных
 # матчей. Затем следуют результаты каждого матча.
 # В первой строке каждого матча записано два числа, gA, gB (0 ≤ gA, gB ≤ 20) — количество голов, которые забили
 # команды A и B.
@@ -22,44 +65,5 @@
 # У Аркадия id всегда равно 0.
 #
 # Формат вывода
-# Для каждого футбольного матча выведите одно целое число — количество игроков с разницей мячей больше, чем у Аркадия.
-
-import sys
-
-inp = []
-line = ' '
-while line != '\n':
-    line = sys.stdin.readline()
-    inp.append(line)
-
-for l in range(len(inp)):
-    inp[l] = inp[l].replace('\n', '').strip()
-
-while '' in inp:
-    inp.remove('')
-
-n_kmd = int(inp[0])
-n_kom = int(inp[2])
-
-kmd = [int(x) for x in inp[1].split()]
-kmd.sort()
-
-fff = inp[3:3 + int(inp[2])]
-kom = []
-for u in fff:
-    for k in range(int(u.split()[1])):
-        kom.append(int(u.split()[0]))
-kom.sort()
-
-results = []
-for s in kmd:
-    for r in range(len(kom)):
-        if kom[r] >= s:
-            results.append(1)
-            kom[r] = 0
-            break
-
-if sum(results) == len(kmd):
-    print('Yes')
-else:
-    print('No')
+# Для каждого футбольного матча выведите одно целое число — количество игроков с разницей мячей больше, чем 
+# у Аркадия.
