@@ -3,40 +3,59 @@
 
 
 import sys
+from collections import defaultdict
 
 
-def line_int():
-    return [int(i) for i in sys.stdin.readline().strip().replace('  ', ' ').split()]
+def line_int():  # для построчного считывания данных из консоли
+    return [int(i) for i in sys.stdin.readline().split()]
 
 
-n_sotr, n_igr = line_int()
+n_sotr, n_igr = line_int()  # число сотрудников и количество игр  
 
-h = dict()
-for i in range(n_igr):
+h = defaultdict(int)  # словарь для хранения результатов игр каждого сотрудника
+h = {ind: 0 for ind in range(n_sotr)}  # без раздачи нулей бывает, PyCharm сбоит, хотя не должен
+
+cnt = 0  # счётчик, в нём будет результат
+
+for i in range(n_igr):  # считываем данные очередной игры
     gol1, gol2 = line_int()
     ids = line_int()
     res = gol1 - gol2
 
-    sered = int(len(ids)/2)  # вдруг в командах не по 5 человек
-    for id in ids[:sered]:   # строки ниже пока оставил в "классическом" виде
-        if id in h:
-            h[id] += res
-        else:
-            h[id] = res
-    for id in ids[sered:]:
-        if id in h:
-            h[id] -= res
-        else:
-            h[id] = -res
+    if 0 not in ids:  # если 0 не в ids, можно посчитать до, после и дифференциал добавить
+        before = 0  # посчитали до
+        h0 = h[0]  # немного сэкономим времени, введя переменную
+        for id in ids:
+            if h[id] > h0:
+                before += 1
 
-    cnt = 0
-    # for id in h:  # сравниваем по всем сыгравшим
-    for id in ids:  # сравниваем только внутри игроков этого матча
-        if h[id] > h[0]:
-            cnt += 1
-    #print(ids)
-    #print(dict(sorted(h.items())))
-    print(cnt)
+        for id in ids[:5]:  # записали участникам матча новые данные
+            h[id] += res
+        for id in ids[5:]:
+            h[id] -= res
+
+        after = 0  # посчитали после
+        h0 = h[0]
+        for id in ids:  # экономим время, сравниваем только внутри ids (по сыгравшим)
+            if h[id] > h0:
+                after += 1
+
+        cnt = cnt + after - before  # старое значение плюс дифференциал
+        print(cnt)  # выводим ответ
+
+    else:  # если 0 в ids, то считать надо по всей базе, т.е. по всем h
+        cnt = 0
+        for id in ids[:5]:
+            h[id] += res
+        for id in ids[5:]:
+            h[id] -= res
+        for id in h:  # сравниваем по всем h
+            h0 = h[0]
+            if h[id] > h0:
+                cnt += 1
+        print(cnt)  # выводим ответ
+
+exit()
 
 
 
