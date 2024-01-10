@@ -58,7 +58,7 @@ for i in range(n_igr):  # считываем данные игр и считае
             h[id] += res
         for id in ids[5:]:
             h[id] -= res
-            h0 = h[0]
+        h0 = h[0]
         for id in h:  # сравниваем по всем h
             if h[id] > h0:
                 cnt += 1
